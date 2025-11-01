@@ -1,18 +1,21 @@
-import { Component, AfterViewInit, inject } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { ApiBaseService } from 'app/shared/services/api-base.service';
-import { ErrorsService } from 'app/shared/services/errors.service';
-import { SharedModule } from 'app/shared/shared.module';
+import { HttpClient } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import {  NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
 import { DropdownModule } from 'primeng/dropdown';
+
+import { ErrorsService } from 'app/shared/services/errors.service';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [SharedModule, DropdownModule],
+  imports: [SharedModule, DropdownModule ],
   templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent extends ApiBaseService implements AfterViewInit {
+export class RegisterComponent {
    user = true;      // job seeker default
   admin = false;    // employer
   errors = inject(ErrorsService);
@@ -27,13 +30,10 @@ export class RegisterComponent extends ApiBaseService implements AfterViewInit {
   };
 
   constructor(
-  ) {
-    super();
-  }
+    private router: Router,
+    private http: HttpClient,
+  ) {}
 
-  ngAfterViewInit(): void {
-    throw new Error('Method not implemented.');
-  }
 
   selectType(type: 'jobseeker' | 'employer') {
     this.user = type === 'jobseeker';

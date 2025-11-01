@@ -1,74 +1,97 @@
 import {
   ChangeDetectorRef,
-  Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
 import { UserProfileService } from '../../core/services/user.service';
-import { environment } from 'environments/environment.development';
+// Use the environment that Angular CLI replaces for prod/dev
+import { environment } from 'environments/environment';
 import { AuthAPIService } from 'app/pages/auth/auth-api.service';
+import { CommonModule } from '@angular/common';
+import { AuthService } from 'app/pages/auth/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  styleUrls: ['./header.component.scss'], // ✅ correct property name (plural)
   providers: [AuthAPIService, UserProfileService],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  token = !!localStorage.getItem('access');
+  // Services (via `inject` for tree-shakable providers)
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly authApiService = inject(AuthAPIService);
+  private readonly messageService = inject(MessageService);
+  private readonly userService = inject(UserProfileService);
+  readonly authService = inject(AuthService);
 
-  // user dropdown (desktop)
-  menuOpen = false;
-
-  // mobile menu state
-  mobileOpen = false;
+  // UI state
+  menuOpen = false;          // desktop user dropdown
+  mobileOpen = false;        // mobile menu state
 
   absoluteAvatar: string | null = null;
   firstName: string | null = null;
 
-  private destroy$ = new Subject<void>();
+  // simple flag for template bindings (derived from token presence)
+  isAuthenticated = false;
 
   // refs
   @ViewChild('menuRoot', { static: false }) menuRoot?: ElementRef<HTMLElement>;
   @ViewChild('navbarEl', { static: false }) navbarEl?: ElementRef<HTMLElement>;
 
-  constructor(
-    private router: Router,
-    private userService: UserProfileService,
-  ) {
-    this.userService.user$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        const rel = data?.data?.user?.profile_picture;
-        this.absoluteAvatar = this.toAbsolute(rel);
-        this.firstName = data?.data?.user?.first_name;
-      });
-
-    // close mobile menu whenever we navigate
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(() => this.closeMobileMenu());
-  }
-
-  cdr = inject(ChangeDetectorRef);
-  authApiService = inject(AuthAPIService);
-  messageService = inject(MessageService);
+  private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+    // initialize auth flag at startup
+    this.isAuthenticated = this.authService.isLoggedIn();
+
+    // keep auth flag in sync across tabs
     window.addEventListener('storage', this.syncToken);
+
+    // subscribe to user stream only if logged in
+    if (this.isAuthenticated) {
+      this.userService.user$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data: any) => {
+          const rel = data?.data?.user?.profile_picture;
+          this.absoluteAvatar = this.toAbsolute(rel);
+          this.firstName = data?.data?.user?.first_name ?? null;
+          this.cdr.markForCheck();
+        });
+    }
+
+    // close mobile menu on every navigation
+    this.router.events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.closeMobileMenu());
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('storage', this.syncToken);
-    this.destroy$.next(); this.destroy$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  notImplemented(){
-    this.messageService.add({ severity: 'info', summary: 'لم يتم التنفيذ', detail: 'هذه الميزة غير متوفرة حالياً' });
+  notImplemented() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'لم يتم التنفيذ',
+      detail: 'هذه الميزة غير متوفرة حالياً'
+    });
   }
 
   // ===== Desktop user menu =====
@@ -85,8 +108,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // close mobile menu if click outside navbar & toggle button
     if (this.mobileOpen) {
       const target = e.target as HTMLElement;
-      const insideNavbar = target.closest('.navbar');
-      const toggleBtn = target.closest('.mobile-menu-toggle');
+      const insideNavbar = !!target.closest('.navbar');
+      const toggleBtn = !!target.closest('.mobile-menu-toggle');
       if (!insideNavbar && !toggleBtn) this.closeMobileMenu();
     }
   }
@@ -94,8 +117,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.escape')
   onEsc() { this.closeMobileMenu(); this.closeMenu(); }
 
+  // keep isAuthenticated in sync across tabs/windows
   private syncToken = (e: StorageEvent) => {
-    if (e.key === 'access') this.token = !!e.newValue;
+    if (e.storageArea !== localStorage) return;
+    if (e.key === 'access') {
+      this.isAuthenticated = !!e.newValue;
+      this.cdr.markForCheck();
+    }
   };
 
   private toAbsolute(path: string | null | undefined): string | null {
@@ -107,10 +135,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    this.authApiService.logout().subscribe((res: any) => {
-      this.token = false;
-      this.messageService.add({ severity: 'success', summary: 'تسجيل الخروج', detail: res?.data?.message ?? 'تم تسجيل الخروج' });
-    });
+    // Call API; on success, clear local session and notify
+    this.authApiService.logout()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.authService.clear();
+          this.isAuthenticated = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'تسجيل الخروج',
+            detail: res?.data?.message ?? 'تم تسجيل الخروج'
+          });
+          // Optional: navigate to login/home
+          this.router.navigateByUrl('/auth/login').catch(() => {});
+        },
+        error: () => {
+          // even if server fails, ensure local logout
+          this.authService.clear();
+          this.isAuthenticated = false;
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'تسجيل الخروج',
+            detail: 'تم إنهاء الجلسة محلياً'
+          });
+          this.router.navigateByUrl('/auth/login').catch(() => {});
+        }
+      });
   }
 
   // ===== Mobile menu =====
@@ -128,8 +179,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize')
   onResize() {
-    if (window.innerWidth > 768 && this.mobileOpen) {
-      this.closeMobileMenu();
-    }
+    if (window.innerWidth > 768 && this.mobileOpen) this.closeMobileMenu();
   }
 }

@@ -109,37 +109,37 @@ export class LoginComponent {
     const payload = { phone: this.phone, password: this.password };
 
     this.http.post(environment.getUrl('login'), payload).subscribe({
-  next: (res: any) => {
-    const access = res?.data?.token as string | undefined;
-    const refresh = res?.refresh as string | undefined;
-    if (!access) { this.errors.error('لا يوجد رمز دخول'); return; }
+      next: (res: any) => {
+        const access = res?.data?.token as string | undefined;
+        const refresh = res?.refresh as string | undefined;
+        if (!access) { this.errors.error('لا يوجد رمز دخول'); return; }
 
-    this.auth.setTokens(access, refresh);
-    console.log('token set, fetching profile…');
+        this.auth.setTokens(access, refresh);
+        console.log('token set, fetching profile…');
 
-    this.getProfile().subscribe({
-      next: (data: any) => {
-        const backendType = data?.data?.user?.user_type as string | undefined;
-        const backendRole = this.mapBackendRole(backendType);
+        this.getProfile().subscribe({
+          next: (data: any) => {
+            const backendType = data?.data?.user?.user_type as string | undefined;
+            const backendRole = this.mapBackendRole(backendType);
 
-        if (!backendRole) { this.errors.error('نوع الحساب غير معروف'); this.authAPIService.logout(); return; }
+            if (!backendRole) { this.errors.error('نوع الحساب غير معروف'); this.authAPIService.logout(); return; }
 
-        if (backendRole !== chosen) {
-          this.errors.error('نوع الحساب المختار لا يطابق حسابك'); 
-          this.authAPIService.logout(); 
-          return;
-        }
+            if (backendRole !== chosen) {
+              this.errors.error('نوع الحساب المختار لا يطابق حسابك'); 
+              this.authAPIService.logout(); 
+              return;
+            }
 
-        this.auth.setRole(backendRole);
-        this.router.navigateByUrl(backendRole === 'employer' ? '/companies' : '/jobseeker');
+            this.auth.setRole(backendRole);
+            this.router.navigateByUrl(backendRole === 'employer' ? '/companies' : '/jobseeker');
+          },
+          error: (err) => {
+            console.error('profile error', err);
+            this.errors.error(err, { join: true });
+            this.authAPIService.logout();
+          },
+        });
       },
-      error: (err) => {
-        console.error('profile error', err);
-        this.errors.error(err, { join: true });
-        this.authAPIService.logout();
-      },
-    });
-  },
   error: (err) => { console.error('login error', err); this.errors.error(err, { join: true }); },
 });
 
