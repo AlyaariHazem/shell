@@ -1,13 +1,19 @@
 import { Route } from '@angular/router';
 import { cartRoutes } from './remote-routes/cart.routes';
 import { LayoutComponent } from './layout/layout.component';
+import { companyRoutes } from './remote-routes/company.routes';
 
 export const ShellRemoteRoutes: Route[] = [
   {
     path: '',
     component: LayoutComponent,
     children: [
-      {path: '', redirectTo: 'home', pathMatch: 'full'},
+      {path: '', redirectTo: 'login', pathMatch: 'full'},
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./pages/auth/Login/login.component').then(m => m.LoginComponent),
+      },
       {
         path: 'home',
         loadComponent: () =>
@@ -24,6 +30,11 @@ export const ShellRemoteRoutes: Route[] = [
             children: [...cartRoutes],
           },
         ],
+      },
+      {
+        path: 'company',
+        data: { breadcrumb: 'company' },
+        children:[...companyRoutes]
       },
       {
         path: 'products',

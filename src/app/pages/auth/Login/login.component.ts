@@ -131,7 +131,7 @@ export class LoginComponent {
             }
 
             this.auth.setRole(backendRole);
-            this.router.navigateByUrl(backendRole === 'employer' ? '/companies' : '/jobseeker');
+            this.router.navigateByUrl(backendRole === 'employer' ? '/company' : '/jobseeker');
           },
           error: (err) => {
             console.error('profile error', err);

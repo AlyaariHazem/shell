@@ -4,11 +4,7 @@ import { RegisterComponent } from './pages/auth/register/register.component';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'login', pathMatch: 'full'
-  },
-  {
-    path:'layout',
+    path:'',
     children: [...ShellRemoteRoutes],
   },
   {

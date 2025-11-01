@@ -6,6 +6,7 @@ import { environment } from './environment';
 export enum RemoteApps {
   cart = 'cart',
   products = 'products',
+  company = 'company',
 }
 
 export interface RemoteUrlOptions {
@@ -20,11 +21,13 @@ type PortMap = Partial<Record<RemoteApps, number>>;
 const SUBDOMAINS: SubdomainMap = {
   [RemoteApps.cart]: 'cart-remote',
   [RemoteApps.products]: 'products-remote',
+  [RemoteApps.company]: 'company-remote',
 } as const;
 
 const LOCAL_PORTS: PortMap = {
   [RemoteApps.cart]: 4202,
   [RemoteApps.products]: 4201,
+  [RemoteApps.company]: 4204,
 };
 
 function isLocalHost(h: string): boolean {
