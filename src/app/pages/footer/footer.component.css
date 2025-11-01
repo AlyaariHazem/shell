@@ -1,0 +1,8 @@
+.footer-nav{
+    background-color: green;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    padding-left: 40%;
+    margin-top: 20px;
+}

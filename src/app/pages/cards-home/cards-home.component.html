@@ -1,0 +1,26 @@
+<!-- src/app/pages/cards-home/cards-home.component.html -->
+<div class="grid">
+  <div class="col-12 sm:col-6 lg:col-4">
+    <p-card header="Products" subheader="Browse all products" styleClass="h-full">
+      <div class="flex align-items-center gap-2 text-2xl mb-3">
+        <i class="pi pi-shopping-bag"></i><span>Products</span>
+      </div>
+      <p class="m-0 text-700">Explore items and details.</p>
+      <ng-template pTemplate="footer">
+        <p-button pButton label="Open" icon="pi pi-arrow-right" (click)="navigate('layout/products')"></p-button>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <div class="col-12 sm:col-6 lg:col-4">
+    <p-card header="Cart" subheader="View your cart" styleClass="h-full">
+      <div class="flex align-items-center gap-2 text-2xl mb-3">
+        <i class="pi pi-shopping-cart"></i><span>Cart</span>
+      </div>
+      <p class="m-0 text-700">Check items ready to purchase.</p>
+      <ng-template pTemplate="footer">
+        <p-button pButton label="Open" icon="pi pi-arrow-right" (click)="navigate('layout/cart')"></p-button>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

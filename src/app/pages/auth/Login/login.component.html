@@ -1,0 +1,90 @@
+<!-- Login Form (PrimeNG) -->
+<div class="form">
+  <form class="p-fluid" dir="rtl" #loginForm="ngForm" (ngSubmit)="login(formModel)">
+    <h2 style="margin-right:2rem;" class="text-center">تسجيل الدخول</h2>
+
+    <!-- Username -->
+    <div class="input2">
+      <!-- make it in the center -->
+      <label for="userName">إدخل اسم المستخدم</label>
+      <input
+        id="userName"
+        type="text"
+        pInputText
+        placeholder="اسم المستخدم"
+        autocomplete="username"
+        name="userName"
+        [(ngModel)]="formModel.userName"
+        #userName="ngModel"
+        required
+        class="w-full"
+        minlength="3"
+        maxlength="22"
+      />
+      @if (userName.errors?.['required']) {
+        <small class="p-error">يجب إدخال اسم المستخدم</small>
+      }
+      @if (userName.errors?.['minlength']) {
+        <small class="p-error">اسم المستخدم يجب أن يكون 3 أحرف على الأقل</small>
+      }
+    </div>
+
+    <!-- Password -->
+    <div class="input2">
+      <label for="password">كلمة السر</label>
+      <p-password
+        inputId="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        placeholder="كلمة السر"
+        autocomplete="current-password"
+        name="password"
+        [(ngModel)]="formModel.password"
+        #password="ngModel"
+        required
+        [minlength]="3"
+        [maxlength]="22"
+        [inputStyle]="{ width: '100%' }"
+        styleClass="w-full"
+      ></p-password>
+      @if (password.errors?.['required']) {
+        <small class="p-error">كلمة السر مطلوبة</small>
+      }
+      @if (password.errors?.['minlength']) {
+        <small class="p-error">يجب أن تكون كلمة السر أكبر من 3 أحرف</small>
+      }
+    </div>
+
+    <!-- User Type -->
+    <div class="input2">
+      <label for="userType">نوع المستخدم</label>
+      <p-dropdown
+        inputId="userType"
+        [options]="userTypes"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="اختر نوع المستخدم"
+        name="userType"
+        [(ngModel)]="formModel.userType"
+        #userType="ngModel"
+        required
+        styleClass="w-full"
+      ></p-dropdown>
+      @if (userType.errors?.['required']) {
+        <small class="p-error">يجب اختيار نوع المستخدم</small>
+      }
+    </div>
+
+    <!-- Submit -->
+    <button
+      pButton
+      type="submit"
+      label="تسجيل دخول"
+      class="p-button-success btn-custom mb-2 buttonSend w-full"
+      [disabled]="loginForm.invalid"
+    ></button>
+
+    <!-- Forgot password -->
+    <a class="forgot-password" (click)="openRegisterDialog()">هل نسيت كلمة السر؟</a>
+  </form>
+</div>

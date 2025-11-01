@@ -1,0 +1,13 @@
+<div class="sb" [class.sb--collapsed]="collapsed">
+  <p-button
+    [styleClass]="'sb__toggle'"
+    type="button"
+    (click)="toggle()"
+    [rounded]="true"
+    [text]="true"
+    [raised]="false">
+    <i class="pi" [ngClass]="collapsed ? 'pi-angle-right' : 'pi-angle-left'"></i>
+  </p-button>
+
+  <p-panelMenu [model]="items" [multiple]="true"></p-panelMenu>
+</div>

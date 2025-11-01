@@ -1,0 +1,35 @@
+/* Container anchors the absolute toggle */
+.sb{
+  position: relative;
+  overflow: visible;                 /* let knob hang outside */
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #283b7b 0%, #1d3165 100%);
+  color: #fff;
+  padding: 14px 12px;
+  border-top-right-radius: 22px;
+  border-bottom-right-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* Real PrimeNG button positioned half outside the sidebar */
+:host ::ng-deep .sb__toggle {
+  position: absolute !important;
+  top: 18px;                         /* adjust to taste */
+  right: -14px;                      /* half of width (28px) → half outside */
+  width: 28px;
+  height: 28px;
+  border-radius: 999px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center;
+  background: #3b82f6 !important;
+  color: #fff !important;
+  border: 3px solid #e6eaf2 !important;   /* white ring */
+  box-shadow: 0 6px 16px rgba(0,0,0,.25) !important;
+  z-index: 3;
+}
+
+/* remove default icon spacing */
+:host ::ng-deep .sb__toggle .p-button-icon { margin: 0 !important; font-size: 14px; }
