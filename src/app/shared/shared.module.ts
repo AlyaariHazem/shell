@@ -32,14 +32,15 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TagModule } from 'primeng/tag';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 // others
 
 const components = [
-  HeaderComponent,
   FooterComponent,
 ];
 const modules = [
   FormsModule,
+  HeaderComponent,
   TableModule,
   MessagesModule,
   MessageModule,
@@ -61,6 +62,8 @@ const modules = [
   SliderModule,
   AutoCompleteModule,
   CardModule,
+  RouterLinkActive,
+  RouterLink,
   InputTextModule,
   InputMaskModule,
   InputNumberModule,

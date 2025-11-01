@@ -7,7 +7,7 @@ import { environment } from 'environments/environment.development';
 @Injectable({
   providedIn: 'root'
 })
-export class User {
+export class UserProfileService {
   readonly user$;
 
   constructor(private http: HttpClient) {

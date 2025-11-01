@@ -19,7 +19,8 @@
     "module": "ES2022",
     "paths": {
       "@app/models":["app/shared/models"],
-      "@app/enums":["app/shared/enums"]
+      "@app/enums":["app/shared/enums"],
+      "@app/types":["app/shared/types"]
     }
   },
   "angularCompilerOptions": {

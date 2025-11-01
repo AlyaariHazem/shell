@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ShellRemoteRoutes } from './shell-remote.routes';
+import { RegisterComponent } from './pages/auth/register/register.component';
 
 export const routes: Routes = [
   {
@@ -9,6 +10,10 @@ export const routes: Routes = [
   {
     path:'layout',
     children: [...ShellRemoteRoutes],
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
   },
   {
     path: 'login',

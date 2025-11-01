@@ -56,7 +56,6 @@ function getSafeLocation(): Location | null {
 const memo = new Map<string, string>();
 
 export function getRemoteUrl(app: RemoteApps, opts: RemoteUrlOptions = {}): string {
-  debugger;
   const key = JSON.stringify({ app, opts });
   const cached = memo.get(key);
   if (cached) return cached;

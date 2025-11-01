@@ -7,17 +7,18 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
-import { MessageModule } from 'primeng/message';
-import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
-/* PrimeNG services */
-import { MessageService } from 'primeng/api';
-
-import { User } from '../../../core/model/user.model';
-import { AuthAPIService } from '../api-base.service';
 import { Router } from '@angular/router';
+import { SharedModule } from 'app/shared/shared.module';
+import { AuthService } from '../auth.service';
+import { HttpClient } from '@angular/common/http';
+import { ErrorsService } from 'app/shared/services/errors.service';
+import { Role } from '@app/types';
+import { environment } from 'environments/environment';
+import { Observable } from 'rxjs';
+import { AuthAPIService } from '../auth-api.service';
 
 @Component({
   selector: 'app-login',
@@ -29,104 +30,137 @@ import { Router } from '@angular/router';
     PasswordModule,
     DropdownModule,
     ButtonModule,
-    MessageModule,
-    ToastModule,
     DialogModule,
+    SharedModule,
     ProgressSpinnerModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  providers: [MessageService] // <-- provide MessageService here (or globally)
+  providers: [Document] // <-- provide MessageService here (or globally)
 })
 export class LoginComponent {
-  private authService = inject(AuthAPIService);
-  private messageService = inject(MessageService);
-  private router = inject(Router);
+   constructor(
+    private router: Router,
+    private http: HttpClient,
+    private auth: AuthService,
+    private authAPIService: AuthAPIService
+  ) {}
 
-  // loading/dialog
-  isLoading = false;
-  visible = false;
-  formModel: any = {
-    user_type: 'ADMIN',
-    username: '',
-    password: ''
-  };
-  // dropdown options
-  user_types = [
-    { label: 'Admin',  value: 'ADMIN' },
-    { label: 'طالب',   value: 'STUDENT' },
-    { label: 'معلم',   value: 'TEACHER' },
-    { label: 'ولي أمر', value: 'GUARDIAN' },
-    { label: 'مدير',   value: 'MANAGER' }
-  ];
+  // Let the user explicitly select one of these:
+  user: boolean = false;   // jobseeker
+  admin: boolean = false;  // employer
 
-  showDialog() {
-    this.isLoading = true;
-    this.visible = true;
+  errors = inject(ErrorsService);
+
+  phone: string = '';
+  password: string = '';
+
+  ngOnInit(): void {
+    // If token already exists, skip login
+    if (this.auth.isLoggedIn()) {
+      const role = this.auth.role ?? 'jobseeker';
+      this.router.navigateByUrl(role === 'employer' ? '/companies' : '/jobseeker');
+    }
   }
 
-  hideDialog() {
-    this.visible = false;
-    this.isLoading = false;
+  // Optional: stricter 9-digit check (or use /^7\d{8}$/ if needed)
+  isInvalidPhone(): boolean {
+    if (!this.phone) return false;
+    const phoneRegex = /^[0-9]{9}$/;
+    return !phoneRegex.test(this.phone);
   }
 
-  login(user: User): void {
-    if (!user?.user_type) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'تحقق',
-        detail: 'يرجى اختيار نوع المستخدم',
-        life: 3500
-      });
+  private selectedRole(): Role | null {
+    if (this.user && !this.admin) return 'jobseeker';
+    if (this.admin && !this.user) return 'employer';
+    return null; // none or both selected
+  }
+
+  private mapBackendRole(user_type: string | undefined | null): Role | null {
+    // Adjust mapping if your backend uses different strings
+    // e.g., 'job_seeker' | 'employer'
+    if (!user_type) return null;
+    const norm = String(user_type).toLowerCase();
+    if (norm === 'job_seeker' || norm === 'jobseeker') return 'jobseeker';
+    if (norm === 'employer' || norm === 'company' || norm === 'recruiter') return 'employer';
+    return null;
+  }
+
+  login(): void {
+    
+    // 1) Must choose a role
+    const chosen = this.selectedRole();
+    if (!chosen) {
+      this.errors.error('الرجاء اختيار نوع الحساب (باحث عن عمل أو صاحب عمل) قبل تسجيل الدخول.');
       return;
     }
-    this.router.navigateByUrl('/layout');
 
-    this.showDialog();
+    // 2) Validate inputs
+    if (this.isInvalidPhone()) {
+      this.errors.error('رقم الهاتف يجب أن يتكون من 9 أرقام فقط');
+      return;
+    }
+    if (!this.password?.trim()) {
+      this.errors.error('الرجاء إدخال كلمة المرور');
+      return;
+    }
 
-    this.authService.login(user).subscribe({
-      next: (response: any) => {
-        this.hideDialog();
+    // 3) Attempt login
+    const payload = { phone: this.phone, password: this.password };
 
-        if (response?.token) {
-          if (user.user_type === 'ADMIN') {
-            this.authService.router.navigateByUrl('admin');
-          } else {
-            this.authService.router.navigateByUrl('school');
-            this.messageService.add({
-              severity: 'success',
-              summary: 'تم تسجيل الدخول',
-              detail: `مرحبا بك : ${response.managerName ?? ''}`,
-              life: 4000
-            });
-          }
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'خطأ',
-            detail: 'استجابة غير متوقعة من الخادم',
-            life: 4000
-          });
+    this.http.post(environment.getUrl('login'), payload).subscribe({
+  next: (res: any) => {
+    const access = res?.data?.token as string | undefined;
+    const refresh = res?.refresh as string | undefined;
+    if (!access) { this.errors.error('لا يوجد رمز دخول'); return; }
+
+    this.auth.setTokens(access, refresh);
+    console.log('token set, fetching profile…');
+
+    this.getProfile().subscribe({
+      next: (data: any) => {
+        const backendType = data?.data?.user?.user_type as string | undefined;
+        const backendRole = this.mapBackendRole(backendType);
+
+        if (!backendRole) { this.errors.error('نوع الحساب غير معروف'); this.authAPIService.logout(); return; }
+
+        if (backendRole !== chosen) {
+          this.errors.error('نوع الحساب المختار لا يطابق حسابك'); 
+          this.authAPIService.logout(); 
+          return;
         }
+
+        this.auth.setRole(backendRole);
+        this.router.navigateByUrl(backendRole === 'employer' ? '/companies' : '/jobseeker');
       },
-      error: () => {
-        this.hideDialog();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'فشل',
-          detail: 'فشل تسجيل الدخول',
-          life: 4000
-        });
-      }
+      error: (err) => {
+        console.error('profile error', err);
+        this.errors.error(err, { join: true });
+        this.authAPIService.logout();
+      },
     });
+  },
+  error: (err) => { console.error('login error', err); this.errors.error(err, { join: true }); },
+});
+
   }
 
-  openRegisterDialog(): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'معلومة',
-      detail: 'فتح نافذة التسجيل',
-      life: 3000
-    });
+  getProfile(): Observable<any> {
+    // Adjust second argument if your environment.getUrl accepts a namespace
+    // In your snippet: environment.getUrl('profile', 'accounts')
+    return this.http.get(environment.getUrl('profile', 'accounts'));
+  }
+
+  loginWithLinkedIn() {
+    this.errors.messages.add({ severity: 'info', summary: 'تسجيل الدخول عبر LinkedIn قيد التطوير' });
+  }
+
+  loginWithGoogle() {
+    this.errors.messages.add({ severity: 'info', summary: 'تسجيل الدخول عبر Google قيد التطوير' });
+  }
+
+  selectType(type: 'jobseeker' | 'employer') {
+    this.user = type === 'jobseeker';
+    this.admin = type === 'employer';
   }
 }

@@ -6,16 +6,17 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
-import { User } from '../../core/services/user.service';
-import { LogoutService } from 'app/core/services/logout.service';
+import { UserProfileService } from '../../core/services/user.service';
 import { environment } from 'environments/environment.development';
+import { AuthAPIService } from 'app/pages/auth/auth-api.service';
 
 @Component({
   selector: 'app-header',
-  standalone: false,
+  standalone: true,
+  imports: [],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
-  providers: [LogoutService, User],
+  providers: [AuthAPIService, UserProfileService],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   token = !!localStorage.getItem('access');
@@ -37,7 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private userService: User,
+    private userService: UserProfileService,
   ) {
     this.userService.user$
       .pipe(takeUntil(this.destroy$))
@@ -54,7 +55,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   cdr = inject(ChangeDetectorRef);
-  logoutService = inject(LogoutService);
+  authApiService = inject(AuthAPIService);
   messageService = inject(MessageService);
 
   ngOnInit(): void {
@@ -106,12 +107,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    this.logoutService.logout().subscribe((res: any) => {
+    this.authApiService.logout().subscribe((res: any) => {
       this.token = false;
       this.messageService.add({ severity: 'success', summary: 'تسجيل الخروج', detail: res?.data?.message ?? 'تم تسجيل الخروج' });
-      localStorage.removeItem('access');
-      this.router.navigate(['/login']);
-      this.cdr.detectChanges();
     });
   }
 
