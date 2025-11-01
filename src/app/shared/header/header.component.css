@@ -1,0 +1,4 @@
+/* src/app/layout/header/header.component.css */
+:host ::ng-deep .p-menubar {
+  border-radius: 0;
+}

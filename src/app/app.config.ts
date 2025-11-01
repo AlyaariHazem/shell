@@ -6,6 +6,7 @@ import { provideRouter } from '@angular/router';
 import Aura from '@primeng/themes/aura';
 
 import { routes } from './app.routes';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideHttpClient(withFetch()),
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
               darkModeSelector: false || 'none'
             }
           }
-        })
+        }),
+        MessageService
   ]
 };

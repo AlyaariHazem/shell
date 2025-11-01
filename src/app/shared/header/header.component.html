@@ -1,0 +1,62 @@
+<header class="header">
+  <nav class="navbar" [class.mobile-menu-open]="mobileOpen">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="#">
+          <img src="images/HireMe.png" alt="منصة التوظيف" class="logo" />
+        </a>
+      </div>
+
+      <!-- Give the nav an id so the button can aria-controls it -->
+      <ul class="navbar-nav" id="primary-nav" (click)="closeMobileMenu()">
+        <li class="nav-item">
+          <a (click)="notImplemented()" class="nav-link">الوظائف</a>
+        </li>
+        <li class="nav-item">
+          <a  (click)="notImplemented()" class="nav-link">الشركات</a>
+        </li>
+        <li class="nav-item">
+          <a  (click)="notImplemented()" class="nav-link">الرواتب</a>
+        </li>
+        <li class="nav-item">
+          <a  (click)="notImplemented()" class="nav-link">الموارد</a>
+        </li>
+        <li role="none">
+                <button
+                  role="menuitem"
+                  type="button"
+                  (click)="logout()"
+                  class="menu-link danger"
+                >
+                  <i class="pi pi-sign-out menu-ic" aria-hidden="true"></i
+                  ><span>تسجيل الخروج</span>
+                </button>
+              </li>
+      </ul>
+
+      <div class="navbar-actions" dir="rtl" (click)="closeMobileMenu()">
+        <!-- ... your login / user menu as-is ... -->
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        class="mobile-menu-toggle"
+        type="button"
+        (click)="toggleMobileMenu()"
+        [class.active]="mobileOpen"
+        aria-label="فتح القائمة"
+        [attr.aria-expanded]="mobileOpen"
+        aria-controls="primary-nav"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Optional backdrop for click-outside on mobile -->
+  <div
+    class="mobile-backdrop"
+    *ngIf="mobileOpen"
+    (click)="closeMobileMenu()"
+  ></div>
+</header>

@@ -57,20 +57,20 @@
 
     <!-- User Type -->
     <div class="input2">
-      <label for="userType">نوع المستخدم</label>
+      <label for="user_type">نوع المستخدم</label>
       <p-dropdown
-        inputId="userType"
-        [options]="userTypes"
+        inputId="user_type"
+        [options]="user_types"
         optionLabel="label"
         optionValue="value"
         placeholder="اختر نوع المستخدم"
-        name="userType"
-        [(ngModel)]="formModel.userType"
-        #userType="ngModel"
+        name="user_type"
+        [(ngModel)]="formModel.user_type"
+        #user_type="ngModel"
         required
         styleClass="w-full"
       ></p-dropdown>
-      @if (userType.errors?.['required']) {
+      @if (user_type.errors?.['required']) {
         <small class="p-error">يجب اختيار نوع المستخدم</small>
       }
     </div>

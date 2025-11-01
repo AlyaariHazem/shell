@@ -16,7 +16,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 
 import { User } from '../../../core/model/user.model';
-import { AuthAPIService } from '../authAPI.service';
+import { AuthAPIService } from '../api-base.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -47,12 +47,12 @@ export class LoginComponent {
   isLoading = false;
   visible = false;
   formModel: any = {
-    userType: 'ADMIN',
+    user_type: 'ADMIN',
     username: '',
     password: ''
   };
   // dropdown options
-  userTypes = [
+  user_types = [
     { label: 'Admin',  value: 'ADMIN' },
     { label: 'طالب',   value: 'STUDENT' },
     { label: 'معلم',   value: 'TEACHER' },
@@ -71,7 +71,7 @@ export class LoginComponent {
   }
 
   login(user: User): void {
-    if (!user?.userType) {
+    if (!user?.user_type) {
       this.messageService.add({
         severity: 'warn',
         summary: 'تحقق',
@@ -89,7 +89,7 @@ export class LoginComponent {
         this.hideDialog();
 
         if (response?.token) {
-          if (user.userType === 'ADMIN') {
+          if (user.user_type === 'ADMIN') {
             this.authService.router.navigateByUrl('admin');
           } else {
             this.authService.router.navigateByUrl('school');
