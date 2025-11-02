@@ -28,7 +28,7 @@
 						],
 						"styles": [
 							"node_modules/primeflex/primeflex.css",
-							"src/styles.css"
+							"src/styles.scss"
 						],
 						"scripts": [],
 						"main": "src/main.ts",
@@ -102,14 +102,25 @@
 							}
 						],
 						"styles": [
-							"src/styles.css"
+							"src/styles.scss"
 						],
 						"scripts": []
 					}
 				}
 			}
 		}
-	},
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "style": "scss"
+    },
+    "@schematics/angular:application": {
+      "style": "scss"
+    },
+    "@schematics/angular:workspace": {
+      "style": "scss"
+    }
+  },
 	"cli": {
 		"analytics": false
 	}
