@@ -37,11 +37,11 @@ export const ShellRemoteRoutes: Route[] = [
         children:[...companyRoutes]
       },
       {
-        path: 'products',
-        data: { breadcrumb: 'products' },
+        path: 'jobseeker',
+        data: { breadcrumb: 'Job Seeker' },
         loadChildren: () =>
-          import('./remote-routes/product.routes').then(
-            (m) => m.productsRoutes
+          import('./remote-routes/jobseeker.routes').then(
+            (m) => m.jobSeekerRoutes
           ),
       },
     ],

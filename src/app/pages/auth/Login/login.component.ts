@@ -59,7 +59,7 @@ export class LoginComponent {
     // If token already exists, skip login
     if (this.auth.isLoggedIn()) {
       const role = this.auth.role ?? 'jobseeker';
-      this.router.navigateByUrl(role === 'employer' ? '/companies' : '/jobseeker');
+      this.router.navigateByUrl(role === 'employer' ? '/company' : '/jobseeker');
     }
   }
 
