@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-theme',
   imports: [CommonModule],
   templateUrl: './theme.component.html',
-  styleUrls: ['./theme.component.css']
+  styleUrls: ['./theme.component.scss']
 })
 export class ThemeComponent implements OnInit {
   dayLightTheme: boolean = true;

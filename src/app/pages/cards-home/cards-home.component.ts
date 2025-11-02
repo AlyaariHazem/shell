@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-cards-home',
   imports: [CommonModule, CardModule, ButtonModule],
   templateUrl: './cards-home.component.html',
-  styleUrls: ['./cards-home.component.css'],
+  styleUrls: ['./cards-home.component.scss'],
 })
 export class CardsHomeComponent {
   constructor(private router: Router) {}

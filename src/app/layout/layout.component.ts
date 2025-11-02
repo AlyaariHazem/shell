@@ -10,7 +10,7 @@ import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
   standalone: true,
   imports: [CommonModule, RouterOutlet,LoadingBarRouterModule],
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.css'
+  styleUrl: './layout.component.scss'
 })
 export class LayoutComponent {
 

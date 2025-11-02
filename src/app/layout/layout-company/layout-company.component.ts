@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-layout-company',
   imports: [],
   templateUrl: './layout-company.component.html',
-  styleUrl: './layout-company.component.css'
+  styleUrl: './layout-company.component.scss'
 })
 export class LayoutCompanyComponent {
 
