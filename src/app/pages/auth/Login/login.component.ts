@@ -47,7 +47,7 @@ export class LoginComponent {
   ) {}
 
   // Let the user explicitly select one of these:
-  user: boolean = true;   // jobseeker
+  user: boolean = false;   // jobseeker
   admin: boolean = false;  // employer
 
   errors = inject(ErrorsService);
@@ -87,7 +87,7 @@ export class LoginComponent {
   }
 
   login(): void {
-
+    
     // 1) Must choose a role
     const chosen = this.selectedRole();
     if (!chosen) {
@@ -125,8 +125,8 @@ export class LoginComponent {
             if (!backendRole) { this.errors.error('نوع الحساب غير معروف'); this.authAPIService.logout(); return; }
 
             if (backendRole !== chosen) {
-              this.errors.error('نوع الحساب المختار لا يطابق حسابك');
-              this.authAPIService.logout();
+              this.errors.error('نوع الحساب المختار لا يطابق حسابك'); 
+              this.authAPIService.logout(); 
               return;
             }
 
