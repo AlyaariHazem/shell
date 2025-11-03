@@ -750,10 +750,10 @@ img.lazy.loaded {
             cursor: pointer;
         }
 
-        .company-card:hover {
+        /* .company-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
-        }
+        } */
 
         .company-header {
             padding: 1.5rem;
