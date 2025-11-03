@@ -1,0 +1,41 @@
+<!-- ========== Header Card ========== -->
+<div class="company-card">
+  <div class="company-head">
+    <img *ngIf="companyLogo" [src]="companyLogo" alt="" class="company-logo" />
+    <span class="company-name">{{ companyName }}</span>
+  </div>
+
+  <div class="mini-title">تعبئة المعلومات</div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">{{ newApplicants }}</div>
+      <div class="stat-label">متقدم جديد</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">{{ activeJobs }}</div>
+      <div class="stat-label">وظائف نشطة</div>
+    </div>
+  </div>
+
+  <button type="button" class="btn-primary" (click)="updateCompanyProfile()">
+    تحديث ملف الشركة
+  </button>
+</div>
+
+<hr class="menu-divider" />
+
+<!-- Section header pill -->
+<div class="menu-section">
+  <span class="menu-section-title">
+    نظرة عامة
+    <i class="pi pi-book"></i>
+  </span>
+</div>
+
+<!-- ========== Menu Items ========== -->
+<ul class="layout-menu">
+  <ng-container *ngFor="let item of model; let i = index">
+    <li app-menuitem [item]="item" [index]="i" [root]="true"></li>
+  </ng-container>
+</ul>

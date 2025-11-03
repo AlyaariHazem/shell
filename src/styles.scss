@@ -3,6 +3,9 @@
 
 /* You can add global styles to this file, and also import other style files */
 @import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
+
 :root {
     --text-color:#495057;
     --text-color-secondary:#6c757d;
@@ -158,3 +161,26 @@
     --gray-900: #212121;
     color-scheme: light;
 }
+.layout-sidebar {
+  width: 260px;
+  min-width: 280px;
+  height: 88vh;
+  position: sticky; top: 0; background: #fff;
+  border-inline-end: 1px solid #e6e6e6; overflow-y: auto;
+  padding: .75rem .5rem;
+}
+.layout-menu { list-style: none; margin: 0; padding: 0; }
+.layout-menu > li { margin: .25rem 0; }
+.layout-menu a {
+  display: flex; align-items: center; gap: .5rem;
+  text-decoration: none; color: #2d2d2d;
+  padding: .55rem .75rem; border-radius: .5rem;
+  transition: background .2s, color .2s;
+}
+.layout-menu a:hover { background: #f4f4f5; }
+.layout-menu a.active-route { background: #e9f2ff; color: #0b66ff; font-weight: 600; }
+.layout-menu ul { list-style: none; margin: .25rem 0; padding: 0 0 0 1rem; border-inline-start: 2px solid #f0f0f0; }
+
+/* RTL */
+[dir="rtl"] .layout-sidebar { border-inline-start: 1px solid #e6e6e6; border-inline-end: 0; }
+[dir="rtl"] .layout-menu ul { padding: 0 1rem 0 0; border-inline-start: 0; border-inline-end: 2px solid #f0f0f0; }

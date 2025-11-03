@@ -7,13 +7,10 @@ export const ShellRemoteRoutes: Route[] = [
   {
     path: '',
     component: LayoutComponent,
+    data: { withPrimeFlex: true, menuComponentType: 'workflow' },
     children: [
-      {path: '', redirectTo: 'login', pathMatch: 'full'},
-      {
-        path: 'login',
-        loadComponent: () =>
-          import('./pages/auth/Login/login.component').then(m => m.LoginComponent),
-      },
+      {path: '', redirectTo: 'home', pathMatch: 'full'},
+
       {
         path: 'home',
         loadComponent: () =>

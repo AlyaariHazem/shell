@@ -1,27 +1,29 @@
 /* HEADER: fixed at top, explicit height */
 .header {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 64px;               /* fixed header height */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px; /* fixed header height */
   z-index: 1100;
 }
 
 /* LAYOUT GRID: pushed below the fixed header */
 .layout {
   display: grid;
-  grid-template-columns: var(--sidebar-w, 280px) 1fr; 
-  min-height: calc(100vh - 64px);
-  padding-top: 64px;                 /* sit under the header */
+  grid-template-columns: var(--sidebar-w, 280px) 1fr;
+  min-height: calc(45vh - 20px);
+  padding-top: 31px;
 }
 
 /* SIDEBAR SLOT: sticky + fixed height + own scroll */
 .layout__sidebar {
   position: sticky;
-  top: 64px;                         /* starts right under the header */
-  height: calc(100vh - 64px);        /* fixed relative to viewport */
-  overflow-y: auto;                   /* internal scroll */
+  top: 71px;
+  margin-top: 3rem;
+  height: calc(97vh - 64px);
+  overflow-y: auto;
   z-index: 1000;
-  /* let children that protrude (like the round toggle) be visible */
   overflow-x: visible;
 }
 
@@ -30,7 +32,7 @@
   position: relative;
   z-index: 100;
   padding: 1rem;
-  margin: 0;                         /* keep tight; you can add spacing as needed */
+  margin: 0; /* keep tight; you can add spacing as needed */
 }
 
 /* PrimeNG colors override sample (keep if you need white text) */

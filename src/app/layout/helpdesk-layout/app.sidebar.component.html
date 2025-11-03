@@ -1,0 +1,16 @@
+<!-- <button
+  type="button"
+  class="btn-icon btn-icon-only close-sidebar-btn hamburger--elastic"
+  data-class="closed-sidebar"
+  (click)="toggleSidebar()"
+>
+  <i class="pi pi-angle-right"></i>
+</button> -->
+
+<div class="layout-sidebar border-0" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+  <div class="sidebar-header p-1"></div>
+
+  <div [ngSwitch]="menuComponentType" #menuContainer class="layout-menu-container">
+    <app-company-menu *ngSwitchCase="'workflow'"></app-company-menu>
+  </div>
+</div>
